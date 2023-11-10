@@ -25,8 +25,8 @@ import {
     updatedAt: Date;
 
     @ManyToOne(() => User, (user) => user.applications)
-    user: User;
+    user: User[];
 
     @ManyToOne(() => Job, (job) => job.applications)
-    job: Job;
+    job: Job[];
   }

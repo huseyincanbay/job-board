@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   database: postgresql.name,
   synchronize: true,
   logging: true,
-  entities: [__dirname + "/../**/*.entity.js"], // we are going to write entities here
+  entities: [__dirname + '/../src/entities/*.ts'], // we are going to write entities here
   migrations: [__dirname + "/migration/*.ts"],
   subscribers: [],
 });

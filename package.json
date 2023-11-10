@@ -7,10 +7,10 @@
     "watch": "tsc -w",
     "dev": "nodemon dist/src/index.js",
     "start:dev": "concurrently \"tsc -w\" \"nodemon dist/src/index.js\"",
-    "build": "tsc",
-    "start": "ts-node src/index.ts",
+    "build": "rm -rf /dist && tsc",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration": "npm run typeorm migration:run -- -d ./src/data-source.ts"
+    "start": "ts-node src/index.ts",
+    "migration": " npm run typeorm migration:run -- -d ./src/data-source.ts"
   },
   "keywords": [],
   "author": "",
