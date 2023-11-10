@@ -5,11 +5,26 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { AppDataSource } from "./config/data-source";
-const { PORT } = process.env;
+import logging from './helpers/logging';
+import config from "./config/config";
+
+const NAMESPACE = 'Server';
 
 dotenv.config();
-
 const app = express();
+
+/** Log the request */
+app.use((req, res, next) => {
+  /** Log the req */
+  logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+
+  res.on('finish', () => {
+      /** Log the res */
+      logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
+  })
+  
+  next();
+});
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -34,6 +49,15 @@ app.use((req, res, next) => {
   next();
 });
 
+/** Error handling */
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+
+  res.status(404).json({
+    message: error.message,
+  });
+});
+
 // Database Connection
 AppDataSource
   .initialize()
@@ -45,6 +69,9 @@ AppDataSource
   })
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-});
+app.listen(config.server.port, () =>
+  logging.info(
+    NAMESPACE,
+    `Server is running ${config.server.hostname}:${config.server.port}`
+  )
+);
