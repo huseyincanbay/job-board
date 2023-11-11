@@ -5,4 +5,5 @@ const userRoutes = Router();
 
 userRoutes.post('/', UserController.createUserController);
 userRoutes.get('/', UserController.getAllUsersController);
-userRoutes.get('/:id', UserController.getUserByIdController);
+userRoutes.get('/id/:id', UserController.getUserByIdController);
+userRoutes.get('/email/:email', UserController.getUserByEmailController);

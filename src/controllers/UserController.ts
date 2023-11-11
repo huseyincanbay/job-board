@@ -36,17 +36,58 @@ export class UserController {
     res: Response,
     next: NextFunction
   ) => {
+    const id = parseInt(req.params.id, 10);
     try {
-      const id = req.params.id;
-      const user = await UserService.getUserById(parseInt(id));
+      const user = await UserService.getUserById(id);
       if (user !== undefined) {
         res.status(200).json(user);
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ message: "User not found!" });
       }
     } catch (error) {
       res.status(500).json({
-        message: "User could not be found!",
+        message: "Internal server error occured!",
+      });
+    }
+  };
+
+  static getUserByEmailController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const email = req.params.email;
+    try {
+      const user = await UserService.getUserByEmail(email);
+      if (user !== undefined) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({ message: "Email not found!" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Internal server error occured!",
+      });
+    }
+  };
+
+  static updateUserController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const id = parseInt(req.params.id, 10);
+    const userData = req.body;
+    try {
+      const updatedUser = await UserService.updateUser(id, userData);
+      if (updatedUser !== undefined) {
+        res.status(200).json(updatedUser);
+      } else {
+        res.status(404).json({ message: "User not found!" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Internal Server Error occured!",
       });
     }
   };
