@@ -19,7 +19,7 @@ export enum UserRole {
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ nullable: false })
   username: string;
