@@ -91,4 +91,24 @@ export class UserController {
       });
     }
   };
+
+  static deleteUserController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const id = parseInt(req.params.id, 10);
+    try {
+      const deletedUser = await UserService.deleteUser(id);
+      if (deletedUser !== undefined) {
+        res.status(200).json(deletedUser);
+      } else {
+        res.status(404).json({
+          message: "User could not be deleted!",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error occured!" });
+    }
+  };
 }

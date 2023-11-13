@@ -76,4 +76,18 @@ export class UserService {
       throw error;
     }
   };
+
+  static deleteUser = async (id: number): Promise<User | undefined> => {
+    try {
+      const deletedUser = await userRepository.findOneBy({ id: id });
+      if (deletedUser) {
+        await userRepository.remove(deletedUser);
+        return deletedUser;
+      } else {
+        return undefined;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 }
