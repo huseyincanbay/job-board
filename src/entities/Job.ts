@@ -40,7 +40,7 @@ export class Job {
     updatedAt: Date;
 
     @ManyToOne(() => User, (user) => user.jobs)
-    user: User[];
+    user: User;
 
     @OneToMany(() => Application, (application) => application.job)
     applications: Application[]; 

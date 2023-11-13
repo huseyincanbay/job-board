@@ -1,6 +1,5 @@
 import { User } from "../entities/User";
 import { userRepository } from "../repositories/UserRepository";
-import { Request, Response, NextFunction } from "express";
 
 export class UserService {
   static createUser = async (data: User): Promise<User> => {
