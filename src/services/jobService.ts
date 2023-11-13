@@ -42,4 +42,29 @@ export class JobService {
       throw error;
     }
   };
+
+  static getJobById = async (jobId: number): Promise<Job | undefined> => {
+    try {
+      const job = await jobRepository
+        .createQueryBuilder()
+        .select("job")
+        .from(Job, "job")
+        .leftJoinAndSelect("job.user", "user")
+        .where("job.id = :id", { id: jobId })
+        .getOne();
+      return job as Job | undefined;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  static getJobByTitle = async (title: string): Promise<Job | undefined> => {
+    try {
+      const job = await jobRepository.findOneBy({ title: title });
+      return job as Job | undefined;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
 }
