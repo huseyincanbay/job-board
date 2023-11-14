@@ -111,7 +111,42 @@ export class JobController {
     }
   };
 
-  static updateJobController = async () => {}
+  static updateJobController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const id = parseInt(req.params.id, 10);
+    const userData = req.body;
+    try {
+      const updatedJob = await JobService.updateJob(id, userData);
+      if (updatedJob) {
+        res.status(200).json(updatedJob);
+      } else {
+        res.status(404).json({ message: `Job with ID ${id} not found` });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error occured!" });
+    }
+  };
 
-  static deleteJobByIdController = async () => {}
+  static deleteJobController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const id = parseInt(req.params.id, 10);
+    try {
+      const job = await JobService.deleteJob(id);
+      if (job) {
+        res.status(200).json(job);
+      } else {
+        res
+          .status(404)
+          .json({ message: "No Job with ID ${id} to delete not found!" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error occured!" });
+    }
+  };
 }

@@ -8,7 +8,7 @@ import {
   validateSalary,
   validateLocation,
   validatePublicationDate,
-} from "../helpers/jobSearchValidations";
+} from "../helpers/validations";
 
 export class JobService {
   static createJob = async (
@@ -96,7 +96,9 @@ export class JobService {
       const validatedSalaryFrom = validateSalary(filters.salaryFrom);
       const validatedSalaryTo = validateSalary(filters.salaryTo);
       const validatedLocation = validateLocation(filters.location);
-      const validatedPublicationDate = validatePublicationDate(filters.publicationDate);
+      const validatedPublicationDate = validatePublicationDate(
+        filters.publicationDate
+      );
 
       const query = jobRepository.createQueryBuilder("job");
 
@@ -163,14 +165,62 @@ export class JobService {
     }
   };
 
-  static updateJob = async (id: number, data: {
-    title: string;
-    company: string;
-    description: string;
-    requirements: string;
-    location: string;
-    salary: number;
-  }) => {}
+  static updateJob = async (
+    id: number,
+    data: {
+      title: string | undefined;
+      company: string | undefined;
+      description: string | undefined;
+      requirements: string | undefined;
+      location: string | undefined;
+      salary: number | undefined;
+    }
+  ): Promise<Job | undefined> => {
+    try {
+      const jobToUpdate = await jobRepository.findOneBy({ id: id });
 
-  static deleteJobById = async (id: number) => {}
+      if (!jobToUpdate) {
+        throw new Error();
+      }
+
+      if (jobToUpdate) {
+        if (data.title) {
+          jobToUpdate.title = data.title;
+        }
+        if (data.company) {
+          jobToUpdate.company = data.company;
+        }
+        if (data.description) {
+          jobToUpdate.description = data.description;
+        }
+        if (data.requirements) {
+          jobToUpdate.requirements = data.requirements;
+        }
+        if (data.location) {
+          jobToUpdate.location = data.location;
+        }
+        if (data.salary) {
+          jobToUpdate.salary = data.salary;
+        }
+        const updatedJob = await jobRepository.save(jobToUpdate);
+        return updatedJob;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  static deleteJob = async (id: number): Promise<Job | undefined> => {
+    try {
+      const deletedJob = await jobRepository.findOneBy({id: id});
+      if (deletedJob) {
+        await jobRepository.remove(deletedJob);
+        return deletedJob;
+      } else {
+        return undefined;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 }
