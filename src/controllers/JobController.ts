@@ -106,7 +106,6 @@ export class JobController {
           .status(404)
           .json({ message: "Jobs could not found with the provided filters!" });
       }
-      res.status(200).json(jobs);
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error occured!" });
     }
