@@ -2,6 +2,13 @@ import { Job } from "../entities/Job";
 import { User } from "../entities/User";
 import { jobRepository } from "../repositories/JobRepository";
 import { Request, Response, NextFunction } from "express";
+import { subDays } from "date-fns";
+import { Between } from "typeorm";
+import {
+  validateSalary,
+  validateLocation,
+  validatePublicationDate,
+} from "../helpers/jobSearchValidations";
 
 export class JobService {
   static createJob = async (
@@ -43,6 +50,14 @@ export class JobService {
     }
   };
 
+  static getAllJobs = async (): Promise<Job[]> => {
+    try {
+      return await jobRepository.find();
+    } catch (error) {
+      throw error;
+    }
+  };
+
   static getJobById = async (jobId: number): Promise<Job | undefined> => {
     try {
       const job = await jobRepository
@@ -66,5 +81,85 @@ export class JobService {
       throw error;
     }
   };
-  
+
+  // static getJobBySalary = async (salary: number): Promise<Job | undefined> => {
+  //   try {
+  //     const jobBySalary = await jobRepository.findOneBy({ salary: salary });
+  //     return jobBySalary as Job | undefined;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // };
+
+  static searchJobs = async (filters: any): Promise<Job[]> => {
+    try {
+      const validatedSalaryFrom = validateSalary(filters.salaryFrom);
+      const validatedSalaryTo = validateSalary(filters.salaryTo);
+      const validatedLocation = validateLocation(filters.location);
+      const validatedPublicationDate = validatePublicationDate(filters.publicationDate);
+
+      const query = jobRepository.createQueryBuilder("job");
+
+      if (
+        validatedSalaryFrom !== undefined &&
+        validatedSalaryTo !== undefined
+      ) {
+        query.andWhere("job.salary BETWEEN :salaryFrom AND :salaryTo", {
+          salaryFrom: validatedSalaryFrom,
+          salaryTo: validatedSalaryTo,
+        });
+      } else if (validatedSalaryFrom !== undefined) {
+        query.andWhere("job.salary >= :salaryFrom", {
+          salaryFrom: validatedSalaryFrom,
+        });
+      } else if (validatedSalaryTo !== undefined) {
+        query.andWhere("job.salary <= :salaryTo", {
+          salaryTo: validatedSalaryTo,
+        });
+      }
+
+      if (validatedLocation !== undefined) {
+        query.andWhere("job.location = :location", {
+          location: validatedLocation,
+        });
+      }
+
+      if (validatedPublicationDate !== undefined) {
+        let dateFilter: Date | undefined;
+
+        switch (validatedPublicationDate) {
+          case "last24Hours":
+            dateFilter = subDays(new Date(), 1);
+            break;
+          case "last3Days":
+            dateFilter = subDays(new Date(), 3);
+            break;
+          case "last7Days":
+            dateFilter = subDays(new Date(), 7);
+            break;
+          case "last15Days":
+            dateFilter = subDays(new Date(), 15);
+            break;
+          case "last30Days":
+            dateFilter = subDays(new Date(), 30);
+            break;
+          default:
+            throw Error;
+        }
+
+        if (dateFilter) {
+          query.andWhere("job.createdAt >= :dateFilter", { dateFilter });
+        }
+      }
+
+      const jobs = await query
+        .leftJoinAndSelect("job.user", "user")
+        .leftJoinAndSelect("job.applications", "applications")
+        .getMany();
+
+      return jobs;
+    } catch (error) {
+      throw error;
+    }
+  };
 }

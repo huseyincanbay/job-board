@@ -23,10 +23,14 @@ export class UserController {
   ) => {
     try {
       const users = await UserService.getAllUsers();
-      res.status(200).json(users);
+      if (users !== undefined) {
+        res.status(200).json(users);
+      } else {
+        res.status(404).json({ message: "Users not found!" });
+      }
     } catch (error) {
       res.status(500).json({
-        message: "Users could not be found!",
+        message: "Internal Server Error occured!",
       });
     }
   };
