@@ -162,4 +162,15 @@ export class JobService {
       throw error;
     }
   };
+
+  static updateJob = async (id: number, data: {
+    title: string;
+    company: string;
+    description: string;
+    requirements: string;
+    location: string;
+    salary: number;
+  }) => {}
+
+  static deleteJobById = async (id: number) => {}
 }

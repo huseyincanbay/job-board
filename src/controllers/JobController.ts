@@ -110,4 +110,8 @@ export class JobController {
       res.status(500).json({ message: "Internal Server Error occured!" });
     }
   };
+
+  static updateJobController = async () => {}
+
+  static deleteJobByIdController = async () => {}
 }
