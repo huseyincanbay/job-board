@@ -55,6 +55,20 @@ export const validateSalary = (salary: any): number | undefined => {
   }
   return requirements;
   };
+
+  export const validateEmail = (email: any): string | undefined => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    if (email !== undefined && typeof email !== 'string') {
+      throw new Error('Invalid email format!');
+    }
+  
+    if (email && !emailRegex.test(email)) {
+      throw new Error('Invalid email format!');
+    }
+  
+    return email;
+  };
   
 
   
