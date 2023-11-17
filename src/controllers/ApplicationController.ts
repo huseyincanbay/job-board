@@ -74,7 +74,7 @@ export class ApplicationController {
       } else {
         res
           .status(404)
-          .json({ message: `Application with User ID ${jobId} not found` });
+          .json({ message: `Application with Job ID ${jobId} not found` });
       }
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error occured!" });
