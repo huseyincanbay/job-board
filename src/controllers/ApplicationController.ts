@@ -38,6 +38,49 @@ export class ApplicationController {
     }
   };
 
+  static getApplicationByUserController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      const applicationByUser = await ApplicationService.getApplicationByUser(
+        userId
+      );
+      if (applicationByUser) {
+        res.status(200).json(applicationByUser);
+      } else {
+        res
+          .status(404)
+          .json({ message: `Application with User ID ${userId} not found` });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error occured!" });
+    }
+  };
+
+  static getApplicationByJobController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const jobId = parseInt(req.params.id, 10);
+      const applicationByApplication =
+        await ApplicationService.getApplicationByJob(jobId);
+      if (applicationByApplication) {
+        res.status(200).json(applicationByApplication);
+      } else {
+        res
+          .status(404)
+          .json({ message: `Application with User ID ${jobId} not found` });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error occured!" });
+    }
+  };
+
   static getApplicationByIdController = async (
     req: Request,
     res: Response,
@@ -97,12 +140,10 @@ export class ApplicationController {
       if (application) {
         res.status(200).json(application);
       } else {
-        res
-          .status(404)
-          .json({
-            message:
-              "No Application with ID ${applicationId} to delete not found!",
-          });
+        res.status(404).json({
+          message:
+            "No Application with ID ${applicationId} to delete not found!",
+        });
       }
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error occured!" });

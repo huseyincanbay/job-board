@@ -37,6 +37,40 @@ export class ApplicationService {
     }
   };
 
+  static getApplicationByUser = async (
+    userId: number
+  ): Promise<Application | undefined> => {
+    try {
+      const applicationByUser = await applicationRepository
+        .createQueryBuilder()
+        .select("application")
+        .from(Application, "application")
+        .leftJoinAndSelect("application.user", "user")
+        .where("application.id = :id", { id: userId })
+        .getOne();
+      return applicationByUser as Application | undefined;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  static getApplicationByJob = async (
+    jobId: number
+  ): Promise<Application | undefined> => {
+    try {
+      const applicationByJob = await applicationRepository
+        .createQueryBuilder()
+        .select("application")
+        .from(Application, "application")
+        .leftJoinAndSelect("application.job", "job")
+        .where("application.id = :id", { id: jobId })
+        .getOne();
+      return applicationByJob as Application | undefined;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   static getApplicationById = async (
     applicationId: number
   ): Promise<Application | undefined> => {
