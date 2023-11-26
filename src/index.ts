@@ -7,6 +7,10 @@ import cookieParser from "cookie-parser";
 import { AppDataSource } from "./config/data-source";
 import logging from './helpers/logging';
 import config from "./config/config";
+import authRoutes from "./router/authRoutes";
+import userRoutes from "./router/userRoutes";
+import applicationRoutes from "./router/applicationRoutes";
+import jobRoutes from "./router/jobRoutes";
 
 const NAMESPACE = 'Server';
 
@@ -48,6 +52,13 @@ app.use((req, res, next) => {
 
   next();
 });
+
+/** Routes go here */
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/applications", applicationRoutes);
+
 
 /** Error handling */
 app.use((req, res, next) => {

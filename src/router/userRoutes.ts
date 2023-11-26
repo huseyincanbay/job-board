@@ -9,3 +9,5 @@ userRoutes.get("/id/:id", UserController.getUserByIdController);
 userRoutes.get("/email/:email", UserController.getUserByEmailController);
 userRoutes.put("/:id", UserController.updateUserController);
 userRoutes.delete("/:id", UserController.deleteUserController);
+
+export default userRoutes;

@@ -10,3 +10,5 @@ applicationRoutes.get("/job/:id", ApplicationController.getApplicationByJobContr
 applicationRoutes.get("/:id", ApplicationController.getApplicationByIdController);
 applicationRoutes.put("/:id", ApplicationController.updateApplicationController);
 applicationRoutes.delete("/:id", ApplicationController.deleteApplicationController);
+
+export default applicationRoutes;

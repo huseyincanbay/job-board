@@ -11,3 +11,5 @@ jobRoutes.get("/:title", JobController.getJobByTitleController);
 jobRoutes.post("/jobs/search", JobController.searchJobsController);
 jobRoutes.put("/:id", JobController.updateJobController);
 jobRoutes.delete("/:id", JobController.deleteJobController);
+
+export default jobRoutes;
