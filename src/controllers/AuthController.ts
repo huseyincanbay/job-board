@@ -8,7 +8,6 @@ import { validateEmail } from "../helpers/validations";
 
 export class AuthController {
   static login = async (req: Request, res: Response) => {
-
     let { email, password } = req.body;
     if (!(email && password)) {
       return res.status(400).json({ message: "There are missing fields!" });
@@ -40,8 +39,51 @@ export class AuthController {
     }
   };
 
-  static changePassword = async (req: Request, res: Response) => {
+  static register = async (req: Request, res: Response) => {
+    const { username, password, email } = req.body;
 
+    if (!(username && password && email)) {
+      return res.status(400).json({ message: "There are missing fields!" });
+    } else if (!validateEmail(email)) {
+      return res.status(400).json({ message: "Invalid email format!" });
+    }
+
+    try {
+      const userRepository = await AppDataSource.getRepository(User);
+      const existingUser = await userRepository.findOneOrFail({
+        where: { email },
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ message: "This email already exists!" });
+      }
+
+      const newUser = new User();
+      newUser.username = username;
+      newUser.password = password;
+      newUser.email = email;
+
+      const errors = await validate(newUser);
+      if (errors.length > 0) {
+        return res.status(400).json(errors);
+      }
+
+      await userRepository.save(newUser);
+
+      const token = jwt.sign(
+        { userId: newUser.id, email: newUser.email },
+        config.jwtSecret,
+        { expiresIn: "1h" }
+      );
+      return res.status(201).json(token);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Internal Server Error occured!" });
+    }
+  };
+
+  static changePassword = async (req: Request, res: Response) => {
     const id = res.locals.jwtPayload.userId;
 
     const { oldPassword, newPassword } = req.body;
@@ -62,7 +104,7 @@ export class AuthController {
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
-      
+
       user.hashPassword();
       await userRepository.save(user);
 
