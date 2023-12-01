@@ -1,1 +1,1 @@
-# Job Board Application
+# Job Board API
